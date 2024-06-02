@@ -46,6 +46,10 @@ details see [here](https://github.com/philippoo66/optolink-splitter/wiki/Command
 
 (be careful, in case of failure don't panic, see here ([pg 2, relatively far down](https://community.viessmann.de/t5/Gas/bitte-Hilfe-Heizung-in-Fehler-Aktorentest-B3HB-Umschaltventil/m-p/439827#M113385)))
 
+**important**
+
+When using PuTTY or some like that, the session must be closed by sending `exit` (as string), because PuTTY seems not to send the FIN-Flag on getting closed.
+
 ## questions, issues
 
 discussion, contact -> [dicussions](https://github.com/philippoo66/optolink-splitter/discussions)
