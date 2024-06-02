@@ -19,7 +19,14 @@ import time
 
 import utils
 import optolinkvs2
+import optolinkvs1
+import settings_ini
 
+
+# protocol version switch
+optolink_lib = optolinkvs2
+if(settings_ini.vs1protocol):
+    optolink_lib = optolinkvs1
 
 # Funktion zum Hinzufügen von Bytes zum Puffer
 def add_to_ringbuffer(buffer, new_bytes):
@@ -85,7 +92,7 @@ vicon_request = bytearray()
 def listen_to_Vitoconnect(servicon:serial, vitolog_loc):
     global vicon_request
     while(True):
-        succ, _, data = optolinkvs2.receive_vs2telegr(False, True, servicon)  # contains sleep(0.005)
+        succ, _, data = optolink_lib.receive_telegr(False, True, servicon)  # contains sleep(0.005)
         if(succ == 1):
             vicon_request = data
         elif(data):

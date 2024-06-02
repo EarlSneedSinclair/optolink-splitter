@@ -25,7 +25,7 @@ import settings_ini
 # Optolink VS2 / 300 Protocol, mainly virtual r/w datapoints
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-def init_vs2(ser:serial.Serial) -> bool:
+def init_protocol(ser:serial.Serial) -> bool:
 
     # after the serial port read buffer is emptied
     ser.reset_input_buffer()
@@ -91,7 +91,7 @@ def read_datapoint_ext(addr:int, rdlen:int, ser:serial.Serial) -> tuple[int, int
     #print("R tx", utils.bbbstr(outbuff))
 
     # return retcode, addr, data
-    return receive_vs2telegr(True, False, ser)
+    return receive_telegr(True, False, ser)
 
 
 def write_datapoint(addr:int, data:bytes, ser:serial.Serial) -> bool:
@@ -117,10 +117,10 @@ def write_datapoint_ext(addr:int, data:bytes, ser:serial.Serial) -> tuple[int, i
     #print("W tx", utils.bbbstr(outbuff))
 
     # return retcode, addr, data
-    return receive_vs2telegr(True, False, ser)
+    return receive_telegr(True, False, ser)
 
 
-def receive_vs2telegr(resptelegr:bool, raw:bool, ser:serial.Serial, ser2:serial.Serial=None) -> tuple[int, int, bytearray]:
+def receive_telegr(resptelegr:bool, raw:bool, ser:serial.Serial, ser2:serial.Serial=None) -> tuple[int, int, bytearray]:
     # returns: ReturnCode, Addr, Data
     # ReturnCode: 01=success, 03=ErrMsg, 15=NACK, 20=UnknB0_Err, 41=STX_Err, AA=HandleLost, FD=PlLen_Err, FE=CRC_Err, FF=TimeOut (all hex)
     # receives the V2 response to a Virtual_READ or Virtual_WRITE request
@@ -213,7 +213,7 @@ def receive_fullraw(eot_time, timeout, ser:serial.Serial, ser2:serial.Serial=Non
     # times in seconds
     data_buffer = b''
     start_time = time.time()
-    last_receive_time = time.time()
+    last_receive_time = start_time
 
     while True:
         # Zeichen vom Serial Port lesen
@@ -270,7 +270,7 @@ def main():
         if not ser.is_open:
             ser.open()
 
-        if not init_vs2(ser):
+        if not init_protocol(ser):
             raise Exception("init_vs2 failed.")
         
         # read test

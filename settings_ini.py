@@ -19,6 +19,7 @@ port_vitoconnect = '/dev/ttyS0'  # '/dev/ttyS0'  older Pi:'/dev/ttyAMA0'  {optio
 port_optolink = '/dev/ttyUSB0'   # '/dev/ttyUSB0'  {mandatory}
 
 vs2timeout = 120                 # seconds to detect VS2 protocol on vitoconnect connection
+vs1protocol = True               # use kw protocol
 
 
 # MQTT +++++++++++++++++++
@@ -39,7 +40,7 @@ fullraw_eot_time = 0.05    # seconds. time no receive to decide end of telegram
 fullraw_timeout = 2        # seconds. timeout, return in any case 
 
 # logging, info +++++++++++++++++++
-log_vitoconnect = False    # logs communication with Vitoconnect (rx+tx telegrams)
+log_vitoconnect = True    # logs communication with Vitoconnect (rx+tx telegrams)
 show_opto_rx = True        # display on screen (no output when ran as service)
 
 # format +++++++++++++++++++

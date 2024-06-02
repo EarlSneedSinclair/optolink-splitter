@@ -16,8 +16,15 @@
 
 import utils
 import optolinkvs2
+import optolinkvs1
 import onewire_util
 import settings_ini
+
+
+# protocol version switch
+optolink_lib = optolinkvs2
+if(settings_ini.vs1protocol):
+    optolink_lib = optolinkvs1
 
 
 def get_value(data, frmat, signd:bool) -> any:
@@ -90,7 +97,7 @@ def get_retstr(retcode, addr, val) -> str:
 
 
 # 'main' functions +++++++++++++++++++++++++++++
-def respond_to_request(request, serViDev) -> tuple[int, bytearray, any, str]:   # retcode, data, value, string_to_pass 
+def response_to_request(request, serViDev) -> tuple[int, bytearray, any, str]:   # retcode, data, value, string_to_pass 
     ispollitem = False
     if(isinstance(request, str)):
         # TCP, MQTT requests
@@ -112,7 +119,7 @@ def respond_to_request(request, serViDev) -> tuple[int, bytearray, any, str]:   
         serViDev.reset_input_buffer()
         serViDev.write(bstr)
         #print("sent to OL:", bbbstr(bstr))
-        data = optolinkvs2.receive_fullraw(settings_ini.fullraw_eot_time,settings_ini.fullraw_timeout, serViDev)
+        data = optolink_lib.receive_fullraw(settings_ini.fullraw_eot_time, settings_ini.fullraw_timeout, serViDev)
         val = utils.arr2hexstr(data)
         retstr = str(val)
         retcode = 0x01  # attention!
@@ -126,7 +133,7 @@ def respond_to_request(request, serViDev) -> tuple[int, bytearray, any, str]:   
             serViDev.reset_input_buffer()
             serViDev.write(bstr)
             #print("sent to OL:", bbbstr(retstr))
-            retcode, _, data = optolinkvs2.receive_vs2telegr(True, True, serViDev)
+            retcode, _, data = optolink_lib.receive_telegr(True, True, serViDev)
             #print("recd fr OL:", ret, ',', bbbstr(data))
             val = utils.arr2hexstr(data)
             retstr = f"{retcode};{val}"
@@ -164,7 +171,7 @@ def respond_to_request(request, serViDev) -> tuple[int, bytearray, any, str]:   
             # write +++++++++++++++++++
             #raise Exception("write noch nicht fertig") #TODO scaling und so
             bval = (utils.get_int(parts[3])).to_bytes(int(parts[2]), 'big')
-            retcode, addr, data = optolinkvs2.write_datapoint_ext(utils.get_int(parts[1]), bval, serViDev)
+            retcode, addr, data = optolink_lib.write_datapoint_ext(utils.get_int(parts[1]), bval, serViDev)
             if(retcode == 1): 
                 val = int.from_bytes(bval, 'big')
             elif(data):
@@ -178,7 +185,7 @@ def respond_to_request(request, serViDev) -> tuple[int, bytearray, any, str]:   
             # write raw +++++++++++++++++++
             hexstr = str(parts[2]).replace('0x','')
             bval = utils.hexstr2arr(hexstr)
-            retcode, addr, data = optolinkvs2.write_datapoint_ext(utils.get_int(parts[1]), bval, serViDev)
+            retcode, addr, data = optolink_lib.write_datapoint_ext(utils.get_int(parts[1]), bval, serViDev)
             if(retcode == 1): 
                 val = hexstr   #int.from_bytes(bval, 'big')
             elif(data):
