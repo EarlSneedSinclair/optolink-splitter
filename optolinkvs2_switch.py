@@ -14,7 +14,7 @@
    limitations under the License.
 '''
 
-version = "1.1.1.1"
+version = "0.2.0.0"  # special read wo1c energy
 
 import serial
 import time
@@ -28,6 +28,8 @@ import viessdata_util
 import tcpip_util
 import requests_util
 import utils
+
+import wo1c_energy
 
 #global_exit_flag = False
 
@@ -225,6 +227,9 @@ def main():
                     if(poll_pointer == len_polllist):
                         if(settings_ini.write_viessdata_csv):
                             viessdata_util.buffer_csv_line(poll_data)
+                        #!!! wo1c energy special !!!
+                        wo1c_energy.read_energy(serViDev)
+                        #!!! +++++++++++++++++++ !!!
                         poll_pointer += 1
                         if(settings_ini.poll_interval == 0):
                             poll_pointer = 0
