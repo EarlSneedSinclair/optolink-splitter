@@ -139,7 +139,7 @@ def receive_vs1telegr(rlen:int, addr:int, ser:serial.Serial, ser2:serial.Serial=
     i = 0
     inbuff = bytearray()
 
-    # for up 20x50ms serial data is read. (we do 200x5ms)
+    # for up 20x50ms serial data is read. (we do 400x5ms)
     while(True):
         time.sleep(0.005)
         try:
@@ -162,7 +162,7 @@ def receive_vs1telegr(rlen:int, addr:int, ser:serial.Serial, ser2:serial.Serial=
 
         # timout
         i+=1
-        if(i > 200):
+        if(i > 400):
             if(settings_ini.show_opto_rx):
                 print("Timeout")
             return 0xFF, addr, inbuff
