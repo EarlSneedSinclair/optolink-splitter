@@ -30,7 +30,7 @@ import settings_ini
 sync_elapsed = True    
 
 def on_synctimer():
-    global sync_elapsed
+    global sync_elapsed   # sind die ganzen global nötig oder nimmt es sie auch so?
     sync_elapsed = True
 
 timer_sync = threading.Timer(1.0, on_synctimer)
@@ -53,7 +53,10 @@ def init_protocol(ser:serial.Serial) -> bool:
     # then an EOT (0x04) is send
     ser.write([0x04])
     # and for 30x100ms waited for an ENQ (0x05)
-    return wait_for_05(ser)
+#    return wait_for_05(ser)
+    ret = wait_for_05(ser)
+    print("init_protocol vs1", ret)
+    return ret
 
 def wait_for_05(ser:serial.Serial) -> bool:
     # and for 30x100ms waited for an ENQ (0x05) - we do 300x10ms (1 byte @4800 ca. 0.002s)
@@ -80,6 +83,7 @@ def read_datapoint(addr:int, rdlen:int, ser:serial.Serial) -> bytes:
     return data
 
 def read_datapoint_ext(addr:int, rdlen:int, ser:serial.Serial) -> tuple[int, int, bytearray]: 
+    global sync_elapsed
     rdlen = rdlen & 0xFF  # is byte
     outbuff = bytearray(4)
     outbuff[0] = 0xF7   # 0xF7 Virtual_READ
@@ -88,7 +92,9 @@ def read_datapoint_ext(addr:int, rdlen:int, ser:serial.Serial) -> tuple[int, int
     outbuff[3] = rdlen  # Anzahl der zu lesenden Daten-Bytes
 
     if(sync_elapsed):
-        wait_for_05()
+        outbuff = bytearray([0x01]) + outbuff  # add STX
+        #wait_for_05(ser)
+        init_protocol(ser)
 
     ser.reset_input_buffer()
     # After message is send, 
@@ -103,6 +109,7 @@ def write_datapoint(addr:int, data:bytes, ser:serial.Serial) -> bool:
     return (retcode == 0x01)
 
 def write_datapoint_ext(addr:int, data:bytes, ser:serial.Serial) -> tuple[int, int, bytearray]:
+    global sync_elapsed
     wrlen = len(data)
     outbuff = bytearray(wrlen+4)
     outbuff[0] = 0xF4   # 0xF4 Virtual_WRITE 
@@ -113,7 +120,9 @@ def write_datapoint_ext(addr:int, data:bytes, ser:serial.Serial) -> tuple[int, i
         outbuff[4 + i] = data[i]
 
     if(sync_elapsed):
-        wait_for_05()
+        outbuff = bytearray([0x01]) + outbuff  # add STX
+        #wait_for_05(ser)
+        init_protocol(ser)
 
     ser.reset_input_buffer()
     ser.write(outbuff)
@@ -135,8 +144,9 @@ def receive_vs1telegr(rlen:int, addr:int, ser:serial.Serial, ser2:serial.Serial=
         time.sleep(0.005)
         try:
             inbytes = ser.read_all()
-        except: return 0xAA, inbytes
+        except: return 0xAA, addr, inbytes
         inbuff += inbytes
+        #print("rx", utils.bbbstr(inbuff))
 
         # ggf. gleich durchleiten 
         if(ser2 is not None):
@@ -155,7 +165,7 @@ def receive_vs1telegr(rlen:int, addr:int, ser:serial.Serial, ser2:serial.Serial=
         if(i > 200):
             if(settings_ini.show_opto_rx):
                 print("Timeout")
-            return 0xFF, inbuff
+            return 0xFF, addr, inbuff
 
 
 def receive_telegr(resptelegr:bool, raw:bool, ser:serial.Serial, ser2:serial.Serial=None) -> tuple[int, int, bytearray]:
@@ -216,7 +226,7 @@ def main():
             ser.open()
 
         if not init_protocol(ser):
-            raise Exception("init_vs2 failed.")
+            raise Exception("init_vs1 failed.")
         
         # read test
         if(True):

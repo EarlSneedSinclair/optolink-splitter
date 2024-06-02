@@ -147,7 +147,7 @@ def response_to_request(request, serViDev) -> tuple[int, bytearray, any, str]:  
                 retcode, val = onewire_util.read_w1sensor(addr)
             else:
                 # Optolink item
-                retcode, addr, data = optolinkvs2.read_datapoint_ext(addr, int(parts[2]), serViDev)
+                retcode, addr, data = optolink_lib.read_datapoint_ext(addr, int(parts[2]), serViDev)
                 if(retcode==1):
                     if(numelms > 3):
                         if(str(parts[3]).startswith('b:')):
