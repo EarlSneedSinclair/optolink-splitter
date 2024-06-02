@@ -9,7 +9,7 @@ def read_energy(ser:serial.Serial):
     # every x-th time...
     global interval
     interval += 1
-    if not (interval % 2 == 0):
+    if (interval < 2):
         return
     interval = 0
 
