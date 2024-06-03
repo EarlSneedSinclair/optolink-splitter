@@ -1,4 +1,6 @@
 import serial
+import datetime
+
 import optolinkvs2
 import utils
 import mqtt_util
@@ -15,7 +17,7 @@ def read_energy(ser:serial.Serial):
 
     # and now reading energy
     addr = 0xb800
-    wkday = 0
+    wkday = datetime.datetime.now().weekday()
     outbuff = bytearray(10)
     outbuff[0] = 0x41   # 0x41 Telegrammstart
     outbuff[1] = 0x07   # Len Payload
