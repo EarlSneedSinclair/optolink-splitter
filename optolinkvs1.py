@@ -65,7 +65,7 @@ def init_protocol(ser:serial.Serial) -> bool:
     return ret
 
 
-def init_protocol_short(ser:serial.Serial) -> bool:
+def re_init(ser:serial.Serial) -> bool:
     # after the serial port read buffer is emptied
     ser.reset_input_buffer()
     # then an EOT (0x04) is send
@@ -73,7 +73,7 @@ def init_protocol_short(ser:serial.Serial) -> bool:
     # and for 30x100ms waited for an ENQ (0x05)
 #    return wait_for_05(ser)
     ret = wait_for_05(ser)
-    print("init_protocol_short", ret)
+    print("re_init", ret)
     return ret
 
 
@@ -112,8 +112,7 @@ def read_datapoint_ext(addr:int, rdlen:int, ser:serial.Serial) -> tuple[int, int
 
     if(sync_elapsed):
         outbuff = bytearray([0x01]) + outbuff  # add STX
-        #wait_for_05(ser)
-        init_protocol_short(ser)
+        re_init(ser)
 
     ser.reset_input_buffer()
     # After message is send, 
@@ -140,8 +139,7 @@ def write_datapoint_ext(addr:int, data:bytes, ser:serial.Serial) -> tuple[int, i
 
     if(sync_elapsed):
         outbuff = bytearray([0x01]) + outbuff  # add STX
-        #wait_for_05(ser)
-        init_protocol_short(ser)
+        re_init(ser)
 
     ser.reset_input_buffer()
     ser.write(outbuff)
