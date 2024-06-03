@@ -48,7 +48,7 @@ def read_energy(ser:serial.Serial):
         # energy_heating_electric
         # energy_water_thermal
         # energy_water_electric
-        mqtt_util.publish_read("energy_heating_thermal", addr, utils.bytesval(data[12:14], 10))
-        mqtt_util.publish_read("energy_heating_electric", addr, utils.bytesval(data[14:16], 10))
-        mqtt_util.publish_read("energy_water_thermal", addr, utils.bytesval(data[16:18], 10))
-        mqtt_util.publish_read("energy_water_electric", addr, utils.bytesval(data[18:20], 10))
+        mqtt_util.publish_read("energy_heating_thermal", addr, utils.bytesval(data[12:14], 0.1))
+        mqtt_util.publish_read("energy_heating_electric", addr, utils.bytesval(data[14:16], 0.1))
+        mqtt_util.publish_read("energy_water_thermal", addr, utils.bytesval(data[16:18], 0.1))
+        mqtt_util.publish_read("energy_water_electric", addr, utils.bytesval(data[18:20], 0.1))
