@@ -117,7 +117,7 @@ def read_datapoint_ext(addr:int, rdlen:int, ser:serial.Serial) -> tuple[int, int
     ser.reset_input_buffer()
     # After message is send, 
     ser.write(outbuff)
-    print("R tx", utils.bbbstr(outbuff))  #temp!
+    #print("R tx", utils.bbbstr(outbuff))  #temp!
     # return retcode, addr, data
     return receive_vs1telegr(rdlen, addr, ser)
 
@@ -143,7 +143,7 @@ def write_datapoint_ext(addr:int, data:bytes, ser:serial.Serial) -> tuple[int, i
 
     ser.reset_input_buffer()
     ser.write(outbuff)
-    print("W tx", utils.bbbstr(outbuff)) #temp!
+    #print("W tx", utils.bbbstr(outbuff)) #temp!
     # return retcode, addr, data
     return receive_vs1telegr(wrlen, addr, ser)
 
