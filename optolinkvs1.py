@@ -61,7 +61,7 @@ def init_protocol(ser:serial.Serial) -> bool:
     ser.write(outbuff)
     retcd,_,_ = receive_vs1telegr(2,0xF8,ser)
     ret = (retcd == 0x01) 
-    print("init_protocol vs1", ret)
+    #print("init_protocol vs1", ret)
     return ret
 
 
@@ -73,7 +73,7 @@ def re_init(ser:serial.Serial) -> bool:
     # and for 30x100ms waited for an ENQ (0x05)
 #    return wait_for_05(ser)
     ret = wait_for_05(ser)
-    print("re_init", ret)
+    #print("re_init", ret)
     return ret
 
 
