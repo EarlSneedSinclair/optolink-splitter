@@ -14,7 +14,7 @@
    limitations under the License.
 '''
 
-version = "1.2.0.0"
+version = "1.2.1.0"
 
 import serial
 import time
@@ -180,12 +180,12 @@ def main():
             # Vitoconncet logging
             if(settings_ini.log_vitoconnect):
                 vitolog = open('vitolog.txt', 'a')
-            # detect VS2 Protokol
-            print("awaiting VS2...")
+            # detect Vicon
+            print("awaiting Vitoconnect...")
             vs2timeout = settings_ini.vs2timeout
-            if not viconn_util.detect_vs2(serViCon, serViDev, vs2timeout, vitolog):
-                raise Exception("VS2 protocol not detected within timeout", vs2timeout)
-            print("VS detected")
+            if not viconn_util.wait_for_vicon(serViCon, serViDev, vs2timeout, vitolog):
+                raise Exception("Vitoconnect not detected within timeout", vs2timeout)
+            print("Vicon detected")
             vicon_thread = threading.Thread(target=viconn_util.listen_to_Vitoconnect, args=(serViCon,vitolog))
             vicon_thread.daemon = True  # Setze den Thread als Hintergrundthread - wichtig für Ctrl-C
             vicon_thread.start()

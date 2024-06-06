@@ -1,3 +1,7 @@
+## This branch also supports KW / VS1 Protocol
+Select protocol version by setting `vs1protocol = True/False` in settings_ini 
+
+
 # optolink-switch/splitter
 **development status!! use at your own risk!**
 
@@ -16,7 +20,7 @@ Splitter for Viessmann Optolink connection
 regard power-on sequence at start-up:
   1. connect all the wires and plugs
   2. power on Raspi
-  3. run script, wait for prompt "awaiting VS2..."
+  3. run script, wait for prompt "awaiting Vitoconnect..."
   4. power on Vitoconnect
 
 ## sw requirements
