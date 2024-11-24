@@ -1,6 +1,10 @@
 # optolink-switch/splitter
 **use at your own risk!**
 
+### This feature branch reads energy counters of previous day and publishs to MQTT
+
+quick&dirty implementation, see daycount.py
+
 Announcements: 
  - There is a [branch supporting VS1 / KW protocol](https://github.com/philippoo66/optolink-splitter/blob/vs1test/)! Choose in case... ;-)
  - There are other feature branches - look at if you like

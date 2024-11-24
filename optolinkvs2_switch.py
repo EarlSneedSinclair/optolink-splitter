@@ -28,6 +28,7 @@ import viessdata_util
 import tcpip_util
 import requests_util
 import utils
+import daycount
 
 #global_exit_flag = False
 
@@ -269,9 +270,12 @@ def main():
                     else:
                         request_pointer += 1
 
+            if(request_pointer == 3):
+                daycount.do_daycount(serViDev)
+
             # request_pointer control --------
             request_pointer += 1
-            if(request_pointer > 2):
+            if(request_pointer > 3):
                 request_pointer = 0
             
             # let cpu take a breath
