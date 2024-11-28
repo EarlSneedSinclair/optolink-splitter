@@ -30,7 +30,7 @@ def do_daycount(ser):
 
     last_hour = now.hour
     
-    if(do_publ):# and now.hour == 1 and now.minute == 30):
+    if(do_publ and now.hour == 1 and now.minute == 30):
         alldone = False 
         if(mqtt_util.mqtt_client):
             #print("do_daycount H2", addr_heatprevday)
