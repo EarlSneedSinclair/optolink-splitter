@@ -74,7 +74,7 @@ def detect_f8_read(serVicon:serial.Serial, serOpto:serial.Serial, timeout:float,
             for byte in dataOpto:
                 bufferOpto.append(byte)
             #optolinkvs2_switch.log_vito(dataOpto, "S")  # funktioniert hier nicht!?!?
-            log_vito(bufferOpto, "S", vitolog_loc)
+            log_vito(dataOpto, "S", vitolog_loc)
             # check read f8
             if(bufferVicon[0:3] == bytearray([0xF7, 0x00, 0xF8])): 
                 if((len(bufferOpto) >= 2) and (bufferOpto[0] == 0x20)):
