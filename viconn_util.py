@@ -70,12 +70,14 @@ def detect_f8_read(serVicon:serial.Serial, serOpto:serial.Serial, timeout:float,
         # Überprüfen, ob Daten von ser2 empfangen wurden und dann auf ser1 schreiben
         if dataOpto:
             serVicon.write(dataOpto)
-            bufferOpto.append(dataOpto)
+#            bufferOpto.append(dataOpto)
+            for byte in dataOpto:
+                bufferOpto.append(byte)
             #optolinkvs2_switch.log_vito(dataOpto, "S")  # funktioniert hier nicht!?!?
-            log_vito(dataOpto, "S", vitolog_loc)
+            log_vito(bufferOpto, "S", vitolog_loc)
             # check read f8
             if(bufferVicon[0:3] == bytearray([0xF7, 0x00, 0xF8])): 
-                if((len(dataOpto) >= 2) and (dataOpto[0] == 0x20)):
+                if((len(bufferOpto) >= 2) and (bufferOpto[0] == 0x20)):
                     # Antwort und beginnt mit 20h
                     return True
         time.sleep(0.001)
