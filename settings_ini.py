@@ -36,8 +36,8 @@ tcpip_port = 65234         # e.g. 65234 is used by Viessdataby default; set None
 
 
 # full raw timing
-fullraw_eot_time = 0.007    # seconds. time no receive to decide end of telegram 
-fullraw_timeout = 1        # seconds. timeout, return in any case 
+fullraw_eot_time = 0.05    # seconds. time no receive to decide end of telegram 
+fullraw_timeout = 2        # seconds. timeout, return in any case 
 
 # logging, info +++++++++++++++++++
 log_vitoconnect = True    # logs communication with Vitoconnect (rx+tx telegrams)

@@ -43,7 +43,7 @@ def log_vito(data, pre, vitolog):
 # VS detection ---------------
 def wait_for_vicon(serVicon:serial.Serial, serOpto:serial.Serial, timeout:float, vitolog_loc) -> bool:
     if(settings_ini.vs1protocol):
-        return detect_vs1(serVicon, serOpto, timeout, vitolog_loc)
+        return detect_f8_read(serVicon, serOpto, timeout, vitolog_loc)
     else:
         return detect_vs2(serVicon, serOpto, timeout, vitolog_loc)
 
@@ -74,47 +74,12 @@ def detect_f8_read(serVicon:serial.Serial, serOpto:serial.Serial, timeout:float,
             for byte in dataOpto:
                 bufferOpto.append(byte)
             #optolinkvs2_switch.log_vito(dataOpto, "S")  # funktioniert hier nicht!?!?
-            log_vito(dataOpto, "S", vitolog_loc)
+            log_vito(bufferOpto, "S", vitolog_loc)
             # check read f8
             if(bufferVicon[0:3] == bytearray([0xF7, 0x00, 0xF8])): 
                 if((len(bufferOpto) >= 2) and (bufferOpto[0] == 0x20)):
                     # Antwort und beginnt mit 20h
                     return True
-        time.sleep(0.001)
-        if(time.time() > timestart + timeout):
-            return False
-
-
-def detect_vs1(serVicon:serial.Serial, serOpto:serial.Serial, timeout:float, vitolog_loc) -> bool:
-    bufferVicon = [] #bytearray()
-    bufferOpto = [] #bytearray()
-    timestart = time.time()
-
-    while True:
-        # Lesen von Daten von beiden seriellen Schnittstellen
-        dataVicon = serVicon.read()
-        dataOpto = serOpto.read()
-
-        # Überprüfen, ob Daten von ser1 empfangen wurden und dann auf ser2 schreiben
-        if dataVicon:
-            serOpto.write(dataVicon)
-            for byte in dataVicon:
-                bufferVicon.append(byte)
-            log_vito(dataVicon, "M", vitolog_loc)
-            # reset optobuffer
-            bufferOpto = []
-
-        # Überprüfen, ob Daten von ser2 empfangen wurden und dann auf ser1 schreiben
-        if dataOpto:
-            serVicon.write(dataOpto)
-            for byte in dataOpto:
-                bufferOpto.append(byte)
-            log_vito(dataOpto, "S", vitolog_loc)
-            if(len(bufferVicon) > 3):
-                if((bufferVicon[0] == 0xF7) and (len(bufferOpto) == bufferVicon[3])):
-                    # resonse according to len of vs1 read request detected
-                    return True
-            bufferVicon = []
         time.sleep(0.001)
         if(time.time() > timestart + timeout):
             return False
@@ -177,4 +142,3 @@ def get_vicon_request() -> bytearray:
     ret = vicon_request
     vicon_request = bytearray()
     return ret
-
