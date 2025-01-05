@@ -43,7 +43,7 @@ def log_vito(data, pre, vitolog):
 # VS detection ---------------
 def wait_for_vicon(serVicon:serial.Serial, serOpto:serial.Serial, timeout:float, vitolog_loc) -> bool:
     if(settings_ini.vs1protocol):
-        return detect_f8_read(serVicon, serOpto, timeout, vitolog_loc)
+        return detect_vs1(serVicon, serOpto, timeout, vitolog_loc)
     else:
         return detect_vs2(serVicon, serOpto, timeout, vitolog_loc)
 
@@ -80,6 +80,41 @@ def detect_f8_read(serVicon:serial.Serial, serOpto:serial.Serial, timeout:float,
                 if((len(bufferOpto) >= 2) and (bufferOpto[0] == 0x20)):
                     # Antwort und beginnt mit 20h
                     return True
+        time.sleep(0.001)
+        if(time.time() > timestart + timeout):
+            return False
+
+
+def detect_vs1(serVicon:serial.Serial, serOpto:serial.Serial, timeout:float, vitolog_loc) -> bool:
+    bufferVicon = bytearray([0xFF, 0xFF, 0xFF, 0xFF])
+    bufferOpto = bytearray()
+    timestart = time.time()
+
+    while True:
+        # Lesen von Daten von beiden seriellen Schnittstellen
+        dataVicon = serVicon.read()
+        dataOpto = serOpto.read()
+
+        # Überprüfen, ob Daten von ser1 empfangen wurden und dann auf ser2 schreiben
+        if dataVicon:
+            serOpto.write(dataVicon)
+            add_to_ringbuffer(bufferVicon, dataVicon)
+            #optolinkvs2_switch.log_vito(dataVicon, "M")  # funktioniert hier nicht!?!?
+            log_vito(dataVicon, "M", vitolog_loc)
+            # reset optobuffer
+            bufferOpto = []
+
+        # Überprüfen, ob Daten von ser2 empfangen wurden und dann auf ser1 schreiben
+        if dataOpto:
+            serVicon.write(dataOpto)
+#            bufferOpto.append(dataOpto)
+            for byte in dataOpto:
+                bufferOpto.append(byte)
+            #optolinkvs2_switch.log_vito(dataOpto, "S")  # funktioniert hier nicht!?!?
+            log_vito(dataOpto, "S", vitolog_loc)
+            # check read f8
+            if(bufferVicon[0] == 0xF7) and (len(bufferOpto) == bufferVicon[3]): 
+                return True
         time.sleep(0.001)
         if(time.time() > timestart + timeout):
             return False
