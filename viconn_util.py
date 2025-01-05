@@ -110,10 +110,10 @@ def detect_vs1(serVicon:serial.Serial, serOpto:serial.Serial, timeout:float, vit
             for byte in dataOpto:
                 bufferOpto.append(byte)
             log_vito(dataOpto, "S", vitolog_loc)
-            # check read f8
-            if((bufferVicon[0] == 0xF7) and (len(bufferOpto) == bufferVicon[3])):
-                # resonse according to len of vs1 read request detected
-                return True
+            if(len(bufferVicon) > 3):
+                if((bufferVicon[0] == 0xF7) and (len(bufferOpto) == bufferVicon[3])):
+                    # resonse according to len of vs1 read request detected
+                    return True
             bufferVicon = []
         time.sleep(0.001)
         if(time.time() > timestart + timeout):
