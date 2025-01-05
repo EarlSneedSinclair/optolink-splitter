@@ -86,8 +86,8 @@ def detect_f8_read(serVicon:serial.Serial, serOpto:serial.Serial, timeout:float,
 
 
 def detect_vs1(serVicon:serial.Serial, serOpto:serial.Serial, timeout:float, vitolog_loc) -> bool:
-    bufferVicon = bytearray([0xFF, 0xFF, 0xFF, 0xFF])
-    bufferOpto = bytearray()
+    bufferVicon = [] #bytearray()
+    bufferOpto = [] #bytearray()
     timestart = time.time()
 
     while True:
@@ -98,8 +98,8 @@ def detect_vs1(serVicon:serial.Serial, serOpto:serial.Serial, timeout:float, vit
         # Überprüfen, ob Daten von ser1 empfangen wurden und dann auf ser2 schreiben
         if dataVicon:
             serOpto.write(dataVicon)
-            add_to_ringbuffer(bufferVicon, dataVicon)
-            #optolinkvs2_switch.log_vito(dataVicon, "M")  # funktioniert hier nicht!?!?
+            for byte in dataVicon:
+                bufferVicon.append(byte)
             log_vito(dataVicon, "M", vitolog_loc)
             # reset optobuffer
             bufferOpto = []
@@ -107,14 +107,14 @@ def detect_vs1(serVicon:serial.Serial, serOpto:serial.Serial, timeout:float, vit
         # Überprüfen, ob Daten von ser2 empfangen wurden und dann auf ser1 schreiben
         if dataOpto:
             serVicon.write(dataOpto)
-#            bufferOpto.append(dataOpto)
             for byte in dataOpto:
                 bufferOpto.append(byte)
-            #optolinkvs2_switch.log_vito(dataOpto, "S")  # funktioniert hier nicht!?!?
             log_vito(dataOpto, "S", vitolog_loc)
             # check read f8
-            if(bufferVicon[0] == 0xF7) and (len(bufferOpto) == bufferVicon[3]): 
+            if((bufferVicon[0] == 0xF7) and (len(bufferOpto) == bufferVicon[3])):
+                # resonse according to len of vs1 read request detected
                 return True
+            bufferVicon = []
         time.sleep(0.001)
         if(time.time() > timestart + timeout):
             return False
