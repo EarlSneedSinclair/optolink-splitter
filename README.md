@@ -6,6 +6,7 @@
 quick&dirty implementation, see daycount.py
 
 Announcements: 
+ - NEW Version 1.2.0.0! see [log](https://github.com/philippoo66/optolink-splitter/wiki/990-Version-Log#version-1200)
  - There is a [branch supporting VS1 / KW protocol](https://github.com/philippoo66/optolink-splitter/blob/vs1test/)! Choose in case... ;-)
  - There are other feature branches - look at if you like
 
@@ -18,7 +19,7 @@ Extened Setup Tutorial (German) on https://www.rustimation.eu/index.php/category
 
 ## usage:
   1. clone files on your Pi (or other Linux or Win computer)
-  2. **adjust settings in settings_ini.py** (for datapoint info see [here](https://github.com/philippoo66/ViessData21?tab=readme-ov-file#dp_listen_2zip) )
+  2. **adjust settings in settings_ini.py** (for datapoint info see [here](https://github.com/philippoo66/optolink-splitter/wiki/310-Parameter-Addresses) and [here](https://github.com/philippoo66/ViessData21?tab=readme-ov-file#dp_listen_2zip) )
   3. run Python script optolinkvs2_switch.py (better [run it as a service](https://github.com/philippoo66/optolink-splitter/wiki/120-optolinkvs2_switch-automatisch-starten)
   4. feel confortable :-)
 
@@ -40,9 +41,9 @@ With Raspi 3 or higher you better utilize ttyAMA0 instead of ttyS0. See [here](h
 
 
 ## sw requirements
-  - Python (not too outdated)
+  - Python >= 3.9
   - pySerial (`pip install pyserial`)
-  - if MQTT is used: phao mqtt (`pip install paho-mqtt`)
+  - if MQTT is used: phao mqtt >= 2.0 (`pip install paho-mqtt`) 
 
   on more recent systems the use of virtual environment gets more or less 'mandatory' ("externally managed system"...). See Wiki ([here](https://github.com/philippoo66/optolink-splitter/wiki/510-error:-externally%E2%80%90managed%E2%80%90environment-%E2%80%90%E2%80%90-venv)) for details.  
 
@@ -83,6 +84,13 @@ discussion, contact -> [dicussions](https://github.com/philippoo66/optolink-spli
 
 issues and bug reports -> [issues](https://github.com/philippoo66/optolink-splitter/issues)
 
+## more pictures
+  
+![grafik](https://github.com/philippoo66/optolink-splitter/assets/122479122/82618777-af8b-492d-8669-e755a1172d80)
+ 
+![grafik](https://github.com/user-attachments/assets/fee2151f-7d99-45a0-a85a-897b54085289)
+
+
 ## version key
 ```
 Vers. 1.0.0.0
@@ -95,12 +103,6 @@ Vers. 1.0.0.0
       |- major version:
          program liftet to a new level
 ```
-
-## more pictures
-  
-![grafik](https://github.com/philippoo66/optolink-splitter/assets/122479122/82618777-af8b-492d-8669-e755a1172d80)
-
-
 
 ## old stuff
 serlog.py is only a logging bridge to see what's going on between Vitconnect and the Optolink device.
