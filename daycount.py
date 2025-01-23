@@ -31,7 +31,7 @@ def do_daycount(ser):
     last_hour = now.hour
     
     if(do_publ and now.hour == 1 and now.minute == 30):
-        alldone = False 
+        done = 0 
         if(mqtt_util.mqtt_client):
             #print("do_daycount H2", addr_heatprevday)
             rcode,addr,buff = optolinkvs2.read_datapoint_ext(addr_heatprevday, 4, ser)
@@ -40,14 +40,14 @@ def do_daycount(ser):
                 val = float(utils.bytesval(buff))
                 mqtt_util.mqtt_client.publish(settings_ini.mqtt_topic + "/dailyHeat", val)
                 print("published", settings_ini.mqtt_topic + "/dailyHeat", f"{val:.1f}")
-                alldone = True
+                done += 1
             time.sleep(0.1)
             #print("do_daycount H2", addr_dhwprevday)
             rcode,addr,buff = optolinkvs2.read_datapoint_ext(addr_dhwprevday, 4, ser)
             if(rcode == 1):
                 val = float(utils.bytesval(buff))
                 mqtt_util.mqtt_client.publish(settings_ini.mqtt_topic + "/dailyDhw",  f"{val:.1f}")
-                alldone &= True
+                done += 1
             time.sleep(0.1)
         #     mqtt_util.mqtt_client.publish(settings_ini.mqtt_topic + "/GasHeatToday", 0)
         #     mqtt_util.mqtt_client.publish(settings_ini.mqtt_topic + "/GasDhwToday", 0)
@@ -58,5 +58,5 @@ def do_daycount(ser):
         #     buff = optolinkvs2.read_datapoint(addr_dhwtoday, 4, ser)
         #     mqtt_util.mqtt_client.publish(settings_ini.mqtt_topic + "/GasDhwToday", utils.bytesval(buff))
         #     time.sleep(0.1) 
-        do_publ = not alldone
+        do_publ = (done < 2)
 
