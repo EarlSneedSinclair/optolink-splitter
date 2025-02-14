@@ -19,15 +19,12 @@ import settings_ini
 
 # utils +++++++++++++++++++++++++++++
 def get_int(v) -> int:
-    if type(v) is int:
-        return v
-    else:
-        return int(eval(str(v)))
+    return int(v, 0)  # Automatische Erkennung von Dezimal-, Hex-, Oktal- und Binärzahlen
 
 def to_number(v):
     s = str(v)
     try:
-        return int(s)
+        return int(s, 0)
     except ValueError:
         try:
             return float(s)
