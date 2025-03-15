@@ -1,121 +1,167 @@
-# optolink-switch/splitter
-**use at your own risk!**
+# Optolink Switch/Splitter
+Make your Viessmann heating locally available via MQTT and TCP/IP while keeping Optolink/ViCare App & more!
 
-### This feature branch reads energy counters of previous day and publishs to MQTT
+![System Architecture](https://github.com/philippoo66/optolink-splitter/assets/122479122/10185cc5-0eed-4bc3-a8d7-b385c4e73aaf)
 
-quick&dirty implementation, see daycount.py
+**Use this software at your own risk.**
 
-Announcements: 
- - NEW Version 1.2.0.0! see [log](https://github.com/philippoo66/optolink-splitter/wiki/990-Version-Log#version-1200)
- - There is a [branch supporting VS1 / KW protocol](https://github.com/philippoo66/optolink-splitter/blob/vs1test/)! Choose in case... ;-)
- - There are other feature branches - look at if you like
+## 🎉 Announcements
+- **Version 1.3.0.0 is out!** Check the [changelog](https://github.com/philippoo66/optolink-splitter/wiki/990-Version-Log#version-1200) for details.
+- Need **VS1 / KW protocol support**? Use the [dedicated branch](https://github.com/philippoo66/optolink-splitter/blob/vs1test/).
+- Explore other feature branches, there might be something useful for you! 😉
 
-### System Overview:
-![grafik](https://github.com/philippoo66/optolink-splitter/assets/122479122/10185cc5-0eed-4bc3-a8d7-b385c4e73aaf)
-
-Splitter for Viessmann Optolink connection [Einführungsvideo](https://youtu.be/95WIPFBxMsc)
-
-Extened Setup Tutorial (German) on https://www.rustimation.eu/index.php/category/iot/viessmann-ohne-api/
-
-## usage:
-  1. clone files on your Pi (or other Linux or Win computer)
-  2. **adjust settings in settings_ini.py** (for datapoint info see [here](https://github.com/philippoo66/optolink-splitter/wiki/310-Parameter-Addresses) and [here](https://github.com/philippoo66/ViessData21?tab=readme-ov-file#dp_listen_2zip) )
-  3. run Python script optolinkvs2_switch.py (better [run it as a service](https://github.com/philippoo66/optolink-splitter/wiki/120-optolinkvs2_switch-automatisch-starten)
-  4. feel confortable :-)
-
-**important** for use with Vitoconnect:
-
-regard power-on sequence at start-up:
-  1. connect all the wires and plugs
-  2. power on Raspi
-  3. run script, wait for prompt "awaiting VS2..."
-  4. power on Vitoconnect
-
-At least with the Opto2 Vitoconnect the startup sequence is not important. This device always reconnects without problems.
-
-When using the Vitoconnect you need to make sure that the on-board serial port is enabled and the serial console is disabled. See Wiki for [guidance](https://github.com/philippoo66/optolink-splitter/wiki/050-Prepare:-enable-serial-port,-disable-serial-console).
-
-Attention: When connecting the CP2102 interface, make sure to **cross RX and TX lines**! What Raspi transmits (TX) the CP2102 has to receive (RX) and vice versa. Set the voltage jumper on the CP2102 TTL board to **3.3V!**
-
-With Raspi 3 or higher you better utilize ttyAMA0 instead of ttyS0. See [here](https://github.com/philippoo66/optolink-splitter/wiki/520-termios.error:-(22,-'Invalid-argument')) for background.
+## 📌 Table of Contents
+- [Introduction](#rocket-introduction)
+- [Software Requirements](#file_folder-software-requirements)
+- [Hardware Requirements](#desktop_computerhardware-requirements)
+- [Installation](#hammer_and_wrench-installation)
+- [Connecting Optolink & Vitoconnect](#electric_plug-connecting-optolink--vitoconnect)
+- [Command Syntax: MQTT & TCP/IP](#receipt-command-syntax-mqtt--tcpip)
+- [Smart Home Integration (e.g. Home Assistant)](#house-smart-home-integration-eg-home-assistant)
+- [Questions & Issues](#interrobang-questions--issues)
+- [3D-Printable Case for Raspberry Pi & USB-TTL Adapter](#printer-3d-printable-case-for-raspberry-pi--usb-ttl-adapter)
+- [Additional Images](#camera_flash-additional-images-mqtt-visualization)
+- [Disclaimer](#memo-disclaimer)
 
 
-## sw requirements
-  - Python >= 3.9
-  - pySerial (`pip install pyserial`)
-  - if MQTT is used: phao mqtt >= 2.0 (`pip install paho-mqtt`) 
+## :rocket: Introduction
 
-  on more recent systems the use of virtual environment gets more or less 'mandatory' ("externally managed system"...). See Wiki ([here](https://github.com/philippoo66/optolink-splitter/wiki/510-error:-externally%E2%80%90managed%E2%80%90environment-%E2%80%90%E2%80%90-venv)) for details.  
+### Key Benefits 
+- **Local Control and Cloud Capability** – Allow full local  control and datapoint access while retaining the ability of Viessmann Cloud and App access.
+- **Viessmann Heating/Heat Pump Compatibility** – Works with Vitodens, Vitocal, Vitocrossal and most other Optolink featured devices.
+- **Smart Home Ready** – Integrates with **Home Assistant**, **ioBroker**, **Node-RED** or any other system with MQTT Support.
+- Supports **VS2 and VS1/KW protocols** with different branches.  
+  - The [vs1test branch](https://github.com/philippoo66/optolink-splitter/tree/vs1test) enables **VS1/KW protocol support** but works **only without** Vitoconnect.  
+  - For **VS1/KW with Vitoconnect**, the [viconn-listener](https://github.com/philippoo66/viconn-listener) is available (currently in beta).  
 
-## hardware requirements
-  - Raspi or other computer
-  - Viessmann Optolink generation device (Vitodens, Vitocal, Vitocrossal, ...)
-  - Optolink r/w head (original from Viessmann, one of all the self-mades, probably a r/w head for volkszähler may work, too, if distance of LEDs gets adjusted ([8€](https://www.ebay.de/itm/285350331996)))
-  - if Vitoconnect gets included: USB connection to Vitoconnect utilizing a **CP2102 chip(!)** [(e.g. this)](https://www.google.com/search?q=cp2102+usb+ttl)
+### Videos
+🎥 **Introduction Video (German):** [Watch on YouTube](https://youtu.be/95WIPFBxMsc)
 
-**ATTENTION!** Raspi UART voltage is **3.3V** so **set the jumper on the CP2102 TTL board accordingly**!  
+📖 **Extended Setup Tutorial (German):** [Rustimation Blog](https://www.rustimation.eu/index.php/category/iot/viessmann-ohne-api/)
 
-## command syntax MQTT, TCP/IP requests
-details see [here](https://github.com/philippoo66/optolink-splitter/wiki/010-Command-Syntax#command-syntax-for-requests-via-mqtt-and-tcpip) 
+## :file_folder: Software Requirements
+- Python (version >= 3.9):
+  - pyserial: `pip install pyserial`
+  - MQTT (version >= 2.0): `pip install paho-mqtt` 
+- Virtual environments recommended ([Guide](https://github.com/philippoo66/optolink-splitter/wiki/510-error:-externally%E2%80%90managed%E2%80%90environment-%E2%80%90%E2%80%90-venv)).
+
+## :desktop_computer:	Hardware Requirements
+- Raspberry Pi or a suitable system.
+- Viessmann Optolink-compatible heating (Vitodens, Vitocal, Vitocrossal, etc.).
+- Optolink r/w head:
+  - Original Viessmann model or self-made.
+  - Volkszähler-compatible versions may work if LED distance is adjusted ([8€ option](https://www.ebay.de/itm/285350331996)).
+- To retain **ViCare App functionality**, use a USB-to-TTL adapter:
+  - Recommended: CP2102 chip ([Example](https://www.google.com/search?q=cp2102+usb+ttl)).
+  - Some newer Vitoconnect models may work with FTDI chips.
+  - **Raspberry Pi UART voltage = 3.3V** → Set jumper accordingly!
+
+## :hammer_and_wrench: Installation
+### 1. Clone the Repository
+```sh
+git clone https://github.com/philippoo66/optolink-splitter.git
+cd optolink-splitter
+```
+
+### 2. Create Virtual Environment & Install Dependencies
+
+Using a virtual environment is recommended to keep dependencies isolated and avoid conflicts with system-wide packages. More details can be found in [this guide](https://github.com/philippoo66/optolink-splitter/wiki/510-error:-externally%E2%80%90managed%E2%80%90environment-%E2%80%90%E2%80%90-venv).
+
+#### 2.1. Create & activate the virtual environment:
+```sh
+python3 -m venv myvenv
+python3 source myvenv/bin/activate  # On Windows use: myvenv\Scripts\activate
+```
+
+#### 2.2. Install required dependencies:
+```sh
+pip install pyserial
+pip install paho-mqtt  # Only if MQTT is used
+```
+*NOTE:* After installation, the environment must be activated before running the script.
+
+### 3. Configure the Settings
+Modify `settings_ini.py` according to your heating (/ datapoints):
+- Refer to [Wiki | Parameter Addresses](https://github.com/philippoo66/optolink-splitter/wiki/310-Parameter-Addresses), [poll_list samples](https://github.com/philippoo66/optolink-splitter/wiki/350-Poll-Configuration-Samples)
+- Refer to [Wiki | ViessData21](https://github.com/philippoo66/ViessData21?tab=readme-ov-file#dp_listen_2zip)
+
+### 4. Run the Script
+```sh
+python3 source myvenv/bin/activate  # Make sure to activate the virtual environment. On Windows use: venv\Scripts\activate
+python3 optolinkvs2_switch.py
+```
+For automatic startup, set up a service. See the [Wiki Guide](https://github.com/philippoo66/optolink-splitter/wiki/120-optolinkvs2_switch-automatisch-starten).
+
+## :electric_plug: Connecting Optolink & Vitoconnect
+### Parallel use with Vitoconnect / ViCare App
+- Ensure the **serial port is enabled** and **serial console is disabled** ([Guide](https://github.com/philippoo66/optolink-splitter/wiki/050-Prepare:-enable-serial-port,-disable-serial-console)).
+- **CP2102 Interface:**
+  - Cross **RX/TX** lines.
+  - Set voltage jumper to **3.3V**.
+  - Use `ttyAMA0` instead of `ttyS0` for Raspberry Pi 3+ ([Details](https://github.com/philippoo66/optolink-splitter/wiki/520-termios.error:-(22,-'Invalid-argument'))).
+
+### Vitoconnect Interfaces
+#### **Vitoconnect 100 OPTO1**
+To ensure proper communication with the system, follow the power-on sequence exactly:
+1. **Connect all wires and plugs** to the Raspberry Pi and Vitoconnect.
+2. **Power on the Raspberry Pi**.
+3. Run the script and wait for the prompt: `awaiting VS2...`.
+4. **Power on Vitoconnect 100 OPTO1**.
+
+#### **Vitoconnect OPTO2**
+The startup sequence for this device is not critical, as it will automatically reconnect without issues.
+
+## :receipt: Command Syntax: MQTT & TCP/IP
+Optolink Splitter can connect to an **MQTT Broker** for sending commands and receiving responses. Alternatively, a direct **TCP/IP connection** (e.g. using PuTTY) can be established to interact with the application directly. For more details on the command syntax, see the [Wiki | Command Syntax Overview](https://github.com/philippoo66/optolink-splitter/wiki/010-Command-Syntax) or go directly to the section on [MQTT and TCP/IP requests](https://github.com/philippoo66/optolink-splitter/wiki/010-Command-Syntax#command-syntax-for-requests-via-mqtt-and-tcpip).
+
 
   - read ambient temperature, scaled with sign:
     - cmnd = read;0x0800;2;0.1;true
-    - resp = 1;2048;8.2
+    - resp: 1;2048;8.2
 
   - read DeviceIdent as raw:
     - cmnd = read;0xf8;8
-    - resp = 1;248;20CB1FC900000114
+    - resp: 1;248;20CB1FC900000114
 
   - write hotwater temperature setpoint:
     - cmnd = write;0x6300;1;45
-    - resp = 1;25344;45
+    - resp: 1;25344;45
 
-(be careful, in case of failure don't panic, see here ([pg 2, relatively far down](https://community.viessmann.de/t5/Gas/bitte-Hilfe-Heizung-in-Fehler-Aktorentest-B3HB-Umschaltventil/m-p/412866/highlight/true#M108705)))
+**Important Note for TCP/IP Connections:**  
+When using PuTTY or similar software for a TCP/IP connection, the session must be closed by sending `exit` as a string, as PuTTY does not appear to send the FIN flag to properly terminate the session when closing.
 
-more regarding syntax see here: https://github.com/philippoo66/optolink-splitter/wiki/010-Command-Syntax
+## :house: Smart Home Integration (e.g. Home Assistant)
+Optolink Splitter seamlessly integrates into your smart home setup via **MQTT**, allowing you to monitor and control your Viessmann heating system using platforms like **Home Assistant**, **ioBroker**, or **Node-RED**. All available heating system data can be visualized in dashboards, automated with custom rules, and integrated into broader smart home routines. With Optolink Splitter’s command-sending capability, you can locally adjust heating modes, temperature setpoints, or pump states directly from your favorite smart home system.
 
-**important**
+For detailed **Home Assistant integration instructions**, see the [Wiki | Home Assistant Integration of Optolink‐Splitter](https://github.com/philippoo66/optolink-splitter/wiki/210-Home-Assistant-Integration-of-Optolink%E2%80%90Splitter).  
 
-When using PuTTY or some like that, the session must be closed by sending `exit` (as string), because PuTTY seems not to send the FIN-Flag on getting closed.
+Below are examples of how this integration looks in different smart home environments:
 
-## questions, issues
+### Heating System Overview in Home Assistant (Built with a Picture Entity Card)
+![grafik](https://github.com/user-attachments/assets/28901428-5cec-4135-aada-795302d58811)
 
-discussion, contact -> [dicussions](https://github.com/philippoo66/optolink-splitter/discussions)
+[Details](https://github.com/philippoo66/optolink-splitter/discussions/67)
 
-issues and bug reports -> [issues](https://github.com/philippoo66/optolink-splitter/issues)
+### Another Heating System Overview in Home Assistant & Command Buttons
+![0b87f133-3285-4cb5-871c-87c66598d42d](https://github.com/user-attachments/assets/596c2f3d-24c3-406a-854b-4679ce0643d7)
 
-## more pictures
-  
+## :interrobang: Questions & Issues
+- Discussions & contact: [GitHub Discussions](https://github.com/philippoo66/optolink-splitter/discussions)
+- Bug reports: [GitHub Issues](https://github.com/philippoo66/optolink-splitter/issues)
+
+## :printer: 3D-Printable Case for Raspberry Pi & USB-TTL Adapter
+A compact and practical 3D-printable case designed for Raspberry Pi 2 & 3 including a CP2102 USB-TTL adapter mount.  A version for **Raspberry Pi 4** may be available in the future. Special thanks to [Kristian](https://github.com/kristian)!  
+
+[Raspberry Pi 2/3 Case with CP2102 UART Board Holder](https://www.printables.com/model/1144565-raspberry-pi-3-b-sleeve-case-w-cp2102-holder-wall)  
+
+## :camera_flash: Additional Images (MQTT, Visualization)
+### Datapoints in settings_ini.py & MQTT Explorer monitoring
 ![grafik](https://github.com/philippoo66/optolink-splitter/assets/122479122/82618777-af8b-492d-8669-e755a1172d80)
  
+### Data visualisation
 ![grafik](https://github.com/user-attachments/assets/fee2151f-7d99-45a0-a85a-897b54085289)
 
+## :memo: Disclaimer
+This software is **not affiliated with, endorsed by, or associated with Viessmann** in any way. The terms Vitoconnect, Optolink, Vitocal, ViCare, etc. refer to Viessmann products and technologies. All product and brand names mentioned belong to their respective owners.<br>
+It is provided **as-is**, without any warranties or guarantees. The authors assume no liability for any issues arising from its use. 
 
-## version key
-```
-Vers. 1.0.0.0
-      | | | |- minor revision:
-      | | |    enhancements, twaeks, mods, bug fixes, no compatibility issues
-      | | |- major revision:
-      | |    structure/content changes, e.g. settings_ini not compatible or module added etc. or functionality added
-      | |- minor version:
-      |    major functionality added
-      |- major version:
-         program liftet to a new level
-```
-
-## old stuff
-serlog.py is only a logging bridge to see what's going on between Vitconnect and the Optolink device.
-
-serlog.py usage (gleiche Reihenfolge bei optolinkvs2_swich): 
-1.    serielle Anschlüsse herstellen (* siehe unten)
-2.    serlog.py starten (bzw. optolinkvs2_swich)
-3.    Vitoconnect mit Spannung versorgen
-4.    mir den Log schicken ;-) (vorher natürlich ein Weilchen laufen lassen und auch ViCare benutzen)
-
-beim Herstellen der seriellen Verbindungen beachten:
-- beim Vitoconnect vorher die Spannungsversorgung trennen (damit es erst anfängt wenn wir schon lauschen)
-- beim USB2TTL
-  a) auf 3.3V jumpern (Raspi UART arbeitet mit 3.3V) 
-  b) +Vcc nicht verbinden (Raspi hat sein eigenes Netzteil) 
-  c) Tx/Rx zwischen Raspi und USB2TTL natürlich kreuzen
