@@ -28,6 +28,7 @@ mqtt_topic = "Vitodens"         # "optolink"
 mqtt_fstr = "{dpname}"          # "{dpaddr:04X}_{dpname}"
 mqtt_listen = "Vitodens/cmnd"   # "optolink/cmnd"; set None to disable listening
 mqtt_respond = "Vitodens/resp"  # "optolink/resp"
+mqtt_retain = False              # Publish retained messages. Last message per topic is stored on broker and sent to new/reconnecting subscribers. (default: False)
 
 
 # TCP/IP +++++++++++++++++++
