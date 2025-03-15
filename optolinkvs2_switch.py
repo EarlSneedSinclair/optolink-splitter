@@ -343,14 +343,14 @@ def main():
                         else:
                             request_pointer += 1
 
-            # feature daycount --------
-            if(request_pointer == 3):
-                daycount.do_daycount(serViDev)
+                # feature daycount --------
+                if(request_pointer == 3):
+                    daycount.do_daycount(serViDev)
 
-            # request_pointer control --------
-            request_pointer += 1
-            if(request_pointer > 3):
-                request_pointer = 0
+                # request_pointer control --------
+                request_pointer += 1
+                if(request_pointer > 3):
+                    request_pointer = 0
                 
                 # let cpu take a breath
                 if(not tookbreath):
