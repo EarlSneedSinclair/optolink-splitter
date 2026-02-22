@@ -189,8 +189,9 @@ def schedvdens2bytes(shedstr:str, dlen:int) -> bytes:
                 tms = sched.split('-')
                 for tm in tms:
                     hm = tm.split(':')
-                    byt = (int(hm[0]) << 3) + (int(round(int(hm[1])/10)))
-                    data.append(byt)
+                    h = (int(hm[0]) << 3) 
+                    m = (int(round(int(hm[1])/10))) if len(hm) > 1 else 0
+                    data.append(h+m)
         # extend/shrink to dlen
         data = (data + b'\xff' * dlen)[:dlen]
         return bytes(data)
@@ -225,8 +226,9 @@ def schedvcal2bytes(shedstr:str, dlen:int) -> bytes:
                 tms = tmfc[0].split('-')
                 for tm in tms:
                     hm = tm.split(':')
-                    byt = (int(hm[0]) << 3) + (int(round(int(hm[1])/10)))
-                    data.append(byt)
+                    h = (int(hm[0]) << 3) 
+                    m = (int(round(int(hm[1])/10))) if len(hm) > 1 else 0
+                    data.append(h+m)
                 data.append(int(tmfc[1]))
         # extend/shrink to dlen
         data = (data + b'\x00' * dlen)[:dlen]
