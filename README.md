@@ -8,8 +8,9 @@ Make your Viessmann heating locally available via MQTT and TCP/IP while keeping 
 For latest developments always check the [Version-Log](https://github.com/philippoo66/optolink-splitter/wiki/990-Version-Log)
 
 ## 🎉 Announcements
-- [**Version 1.11.4.0**](https://github.com/philippoo66/optolink-splitter/wiki/990-Version-Log#version-11140) **Schedulings clear text write by /set** Now possible to write schedulings (heating, hot water, DHW circulation) using clear text with /set feature:<br>
-e.g. topic `vito/circulation_monday/set`, payload `8:00-9:00 *3, 12:00-13:00 *1, 19:30-22:00 *2`
+- [**Version 1.11.4.0**](https://github.com/philippoo66/optolink-splitter/wiki/990-Version-Log#version-11140) **Schedulings clear text write using /set** Now possible to write schedulings (heating, hot water, DHW circulation) using clear text with /set feature:<br>
+e.g. topic `vito/circulation_monday/set`, <br>
+payload `8:00-9:00 *3, 12:00-13:00 *1, 19:30-22:00 *2`
 
 - [**Version 1.11.0.0**](https://github.com/philippoo66/optolink-splitter/wiki/990-Version-Log#version-11100) **Poll cycle groups** implemented and the possibility to alter the cycles at run-time using action command `setpollcycle;<groupkey>;<value>`<br>
 Since V1.10.1 the entire Optolink communikation with the heating device can get logged. Up from V1.10.5 a 'global re-start loop' got implemented to restart the splitter in case of problems.
