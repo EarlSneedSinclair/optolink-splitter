@@ -23,11 +23,13 @@
 import importlib
 #from logger_util import logger
 
+
 SETTINGS_MODULE = "settings_ini"
 
 class SettingsAdapter:
     def __init__(self):
         self._settings_obj = None
+        self.module_date = "0"
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         #  Here we define all the settings and their default values 
@@ -63,6 +65,7 @@ class SettingsAdapter:
 
         # TCP/IP ++++++++++++++++++++++++++
         self.tcpip_port =  65234                # TCP/IP port for communication (default: 65234, used by Viessdata; set None to disable TCP/IP)
+        self.tcp_verbose = False                # TCP verbose logging if True
 
         # Optolink Communication Timing ++++
         self.fullraw_eot_time =  0.05           # Timeout (seconds) to determine end of telegram (default: 0.05)
@@ -118,22 +121,22 @@ class SettingsAdapter:
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         if settings_module:
-            # try:
+            try:
                 self._settings_obj = importlib.import_module(settings_module)
-            # except Exception as e:
-            #     logger.error(f"importing settings module: {e}")
-            #     return
+            except Exception as e:
+                print(f"ERROR importing settings module: {e}")
+                return
         
         # if not self._settings_obj:
         #     logger.error("set_settings: no settings object set")
         #     return
         
         if reload:
-            # try:
+            try:
                 self._settings_obj = importlib.reload(self._settings_obj)
-            # except Exception as e:
-            #     logger.error(f"reload settings module: {e}")
-            #     return
+            except Exception as e:
+                print(f"ERROR reload settings module: {e}")
+                return
 
 
         # General Settings +++++++++++
@@ -173,6 +176,7 @@ class SettingsAdapter:
 
         # TCP/IP ++++++++++++++++++++++++++
         self.tcpip_port = getattr(self._settings_obj, 'tcpip_port', self.tcpip_port)
+        self.tcp_verbose = getattr(self._settings_obj, 'tcp_verbose', self.tcp_verbose)
 
         # Optolink Communication Timing ++++
         self.fullraw_eot_time = getattr(self._settings_obj, 'fullraw_eot_time', self.fullraw_eot_time)
