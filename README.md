@@ -82,6 +82,8 @@ git clone https://github.com/philippoo66/optolink-splitter.git
 cd optolink-splitter
 ```
 
+Instead of using the clone command (requiring git) you may download the files (usually as zip) and copy them into your self-created optolink-splitter folder.
+
 ### 2. Create Virtual Environment & Install Dependencies
 
 Using a virtual environment is recommended to keep dependencies isolated and avoid conflicts with system-wide packages. More details can be found in [this guide](https://github.com/philippoo66/optolink-splitter/wiki/510-error:-externally%E2%80%90managed%E2%80%90environment-%E2%80%90%E2%80%90-venv).
@@ -120,7 +122,7 @@ For automatic startup, set up a service. See the [Wiki Guide](https://github.com
 ## Updating to a new Version
 If you want to update your installation to a new version, the recommended way is to
 - make a backup copy of your current installation (folder)
-- from the new version repo, clone **all files** into your original folder (replace existing files)
+- from the new version repo, clone **all files** into your original folder (replace existing files). If you clone-d the files initially, you may use `git pull` to get the new version.
 
 It is not necessary anymore to add new settings to your settings_ini since there are default values used for every setting. Also your settings_ini.py, poll_list.py and homeassistant_poll_list.py will not get overwritten anymore since all those files got the extension .example in the repo since V1.9. 
 
